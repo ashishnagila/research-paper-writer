@@ -1,1 +1,510 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Paper Writing Assistant</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 20px;
+  background: #f1f4f9;
+  color: #1e293b;
+  font-family: Arial, sans-serif;
+}
+.container {
+  max-width: 1050px;
+  margin: auto;
+}
+header {
+  background: linear-gradient(120deg,#142d50,#426cb5);
+  color: white;
+  padding: 28px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+}
+header h1 { margin-top: 0; }
+.panel {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 8px #0000000a;
+}
+h2 { color: #244e85; }
+label {
+  display: block;
+  font-weight: bold;
+  margin: 12px 0 6px;
+}
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+}
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+button {
+  background: #285ca8;
+  color: white;
+  padding: 11px 17px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 5px 3px 5px 0;
+  font-size: 14px;
+}
+button:hover { background: #173d75; }
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 15px 0;
+}
+.tabs button {
+  background: #e5edf8;
+  color: #1e3a60;
+}
+.tabs button.active {
+  background: #285ca8;
+  color: white;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 15px;
+}
+.muted { color: #64748b; font-size: 13px; }
+#output {
+  min-height: 320px;
+  line-height: 1.7;
+}
+footer {
+  text-align: center;
+  color: #64748b;
+  font-size: 13px;
+  margin: 25px 0;
+}
+@media(max-width:600px) {
+  body { padding: 10px; }
+  .grid { grid-template-columns: 1fr; }
+  header { padding: 20px; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <h1>🎓 Research Paper Writing Assistant</h1>
+  <p>Academic Writing | Research Planning | Manuscript Development</p>
+  <p>Prepare structured research manuscripts for journals and conferences.</p>
+</header>
+
+<div class="panel">
+  <h2>1. Research Information</h2>
+
+  <label>Research Paper Title *</label>
+  <input id="topic" placeholder="Enter your research paper title">
+
+  <div class="grid">
+    <div>
+      <label>Research Discipline</label>
+      <select id="discipline">
+        <option>Computer Science</option>
+        <option>Artificial Intelligence</option>
+        <option>Machine Learning</option>
+        <option>Data Science</option>
+        <option>Healthcare</option>
+        <option>Engineering</option>
+        <option>Management</option>
+        <option>Education</option>
+        <option>Social Sciences</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Paper Type</label>
+      <select id="type">
+        <option>Original Research Article</option>
+        <option>Review Article</option>
+        <option>Systematic Literature Review</option>
+        <option>Scoping Review</option>
+        <option>Conference Paper</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Formatting Style</label>
+      <select id="style">
+        <option>IEEE</option>
+        <option>APA 7th Edition</option>
+        <option>Springer</option>
+        <option>Elsevier</option>
+        <option>Harvard</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Target Length</label>
+      <select id="length">
+        <option>6 Pages</option>
+        <option>8 Pages</option>
+        <option>10 Pages</option>
+        <option>12 Pages</option>
+        <option>5000 Words</option>
+        <option>8000 Words</option>
+      </select>
+    </div>
+  </div>
+
+  <label>Research Problem / Objectives</label>
+  <textarea id="objective" placeholder="Describe your research problem and objectives..."></textarea>
+
+  <label>Research Methodology</label>
+  <textarea id="method" placeholder="Describe your proposed methodology, dataset, algorithms and methods..."></textarea>
+
+  <label>Actual Research Results</label>
+  <textarea id="findings" placeholder="Enter actual experimental results. Do not enter invented data..."></textarea>
+
+  <label>References / DOI</label>
+  <textarea id="references" placeholder="Enter verified research papers, references or DOI links..."></textarea>
+
+  <button onclick="generatePaper()">Generate Paper Structure</button>
+</div>
+
+<div class="panel">
+  <h2>2. Research Paper Sections</h2>
+
+  <div class="tabs" id="tabs"></div>
+
+  <label id="sectionTitle">Select a section</label>
+  <textarea id="output" placeholder="Your section content will appear here..." disabled></textarea>
+
+  <button onclick="copySection()" id="copyBtn" disabled>Copy Section</button>
+  <button onclick="downloadPaper()" id="downloadBtn" disabled>Download Paper</button>
+  <button onclick="clearSection()" id="clearBtn" disabled>Clear Section</button>
+</div>
+
+<div class="panel">
+  <h2>3. Research Quality Checklist</h2>
+
+  <label><input type="checkbox" class="check" style="width:auto"> Research gap identified</label>
+  <label><input type="checkbox" class="check" style="width:auto"> Research objectives defined</label>
+  <label><input type="checkbox" class="check" style="width:auto"> Methodology explained</label>
+  <label><input type="checkbox" class="check" style="width:auto"> Results supported by evidence</label>
+  <label><input type="checkbox" class="check" style="width:auto"> References verified</label>
+  <label><input type="checkbox" class="check" style="width:auto"> Journal guidelines checked</label>
+</div>
+
+<div class="panel">
+  <h2>4. Research Guidelines</h2>
+  <ul>
+    <li>Use authentic and verified references.</li>
+    <li>Never fabricate experimental results.</li>
+    <li>Clearly identify the research gap.</li>
+    <li>Use appropriate evaluation metrics.</li>
+    <li>Follow the selected journal formatting guidelines.</li>
+    <li>Check citations and plagiarism before submission.</li>
+  </ul>
+</div>
+
+<footer>
+  Research Paper Writing Assistant | Academic Research Workspace
+</footer>
+
+</div>
+
+<script>
+const sections = [
+"Title",
+"Abstract",
+"Keywords",
+"Introduction",
+"Literature Review",
+"Research Gap and Objectives",
+"Research Methodology",
+"Results",
+"Discussion",
+"Conclusion",
+"Limitations and Future Work",
+"References"
+];
+
+let paper = {};
+let activeSection = -1;
+
+function generatePaper() {
+
+  const topic = document.getElementById("topic").value.trim();
+
+  if (!topic) {
+    alert("Please enter your research paper title.");
+    return;
+  }
+
+  const objective = document.getElementById("objective").value.trim();
+  const method = document.getElementById("method").value.trim();
+  const findings = document.getElementById("findings").value.trim();
+  const references = document.getElementById("references").value.trim();
+  const type = document.getElementById("type").value;
+  const style = document.getElementById("style").value;
+
+  paper = {
+    "Title": topic,
+
+    "Abstract":
+`Background: [Introduce the research area.]
+
+Problem: ${objective || "[Describe the research problem.]"}
+
+Methodology: ${method || "[Describe the research approach.]"}
+
+Results: ${findings || "[Insert actual results after conducting research.]"}
+
+Conclusion: [Summarize the supported findings and contributions.]`,
+
+    "Keywords":
+"[Keyword 1]; [Keyword 2]; [Keyword 3]; [Keyword 4]; [Keyword 5]",
+
+    "Introduction":
+`1. INTRODUCTION
+
+1.1 Background
+[Introduce the research area and its importance.]
+
+1.2 Problem Statement
+${objective || "[Explain the research problem.]"}
+
+1.3 Research Objectives
+[Define measurable research objectives.]
+
+1.4 Research Contributions
+[Describe the actual contributions of the study.]`,
+
+    "Literature Review":
+`2. LITERATURE REVIEW
+
+[Review relevant previous research.]
+
+Study 1:
+[Author, year, methodology and findings.]
+
+Study 2:
+[Author, year, methodology and findings.]
+
+Comparative Analysis:
+[Compare previous research methods and findings.]
+
+Use verified publications and authentic citations only.`,
+
+    "Research Gap and Objectives":
+`3. RESEARCH GAP AND OBJECTIVES
+
+Research Gap:
+[Explain the gap supported by previous literature.]
+
+Research Questions:
+RQ1: [Research question 1]
+RQ2: [Research question 2]
+
+Objectives:
+${objective || "[List the research objectives.]"}`,
+
+    "Research Methodology":
+`4. RESEARCH METHODOLOGY
+
+Research Design:
+[Explain the research design.]
+
+Methodology:
+${method || "[Describe the methodology.]"}
+
+Dataset:
+[Describe the dataset and its source.]
+
+Evaluation:
+[Describe the evaluation metrics.]
+
+Reproducibility:
+[Explain the experimental setup and procedures.]`,
+
+    "Results":
+`5. RESULTS AND FINDINGS
+
+${findings || "[Insert actual experimental findings, tables, graphs and statistical analysis.]"}
+
+[Discuss observations supported by actual evidence.]`,
+
+    "Discussion":
+`6. DISCUSSION
+
+[Interpret the actual findings.]
+
+[Compare findings with previous verified studies.]
+
+[Discuss practical and theoretical implications.]
+
+[Explain limitations and unexpected observations.]`,
+
+    "Conclusion":
+`7. CONCLUSION
+
+[Summarize the research problem, methodology and supported findings.]
+
+[Explain the actual contributions and implications.]`,
+
+    "Limitations and Future Work":
+`8. LIMITATIONS AND FUTURE WORK
+
+Limitations:
+[Explain the limitations of the research.]
+
+Future Work:
+[Identify potential future research directions.]`,
+
+    "References":
+`9. REFERENCES
+
+${references || "[Add complete verified references in " + style + " format. Verify author names, titles, year, journal, pages and DOI.]"}`
+  };
+
+  renderTabs();
+
+  document.getElementById("copyBtn").disabled = false;
+  document.getElementById("downloadBtn").disabled = false;
+  document.getElementById("clearBtn").disabled = false;
+
+  selectSection(0);
+
+  alert("Research paper structure generated successfully!");
+}
+
+function renderTabs() {
+
+  const tabs = document.getElementById("tabs");
+  tabs.innerHTML = "";
+
+  sections.forEach((section,index) => {
+
+    const button = document.createElement("button");
+    button.textContent = section;
+
+    button.onclick = () => selectSection(index);
+
+    button.id = "tab-" + index;
+
+    tabs.appendChild(button);
+  });
+}
+
+function saveCurrent() {
+  if (activeSection >= 0) {
+    paper[sections[activeSection]] =
+      document.getElementById("output").value;
+  }
+}
+
+function selectSection(index) {
+
+  saveCurrent();
+  activeSection = index;
+
+  document.querySelectorAll(".tabs button").forEach((b,i) => {
+    b.classList.toggle("active",i === index);
+  });
+
+  document.getElementById("sectionTitle").textContent =
+    sections[index];
+
+  const output = document.getElementById("output");
+  output.disabled = false;
+  output.value = paper[sections[index]] || "";
+
+}
+
+function copySection() {
+
+  saveCurrent();
+
+  const text = document.getElementById("output").value;
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text)
+      .then(() => alert("Section copied successfully!"))
+      .catch(() => alert("Please select and copy the text manually."));
+  } else {
+    document.getElementById("output").select();
+    alert("Press Ctrl+C to copy the selected section.");
+  }
+}
+
+function downloadPaper() {
+
+  saveCurrent();
+
+  const topic = document.getElementById("topic").value;
+  const discipline = document.getElementById("discipline").value;
+  const style = document.getElementById("style").value;
+  const type = document.getElementById("type").value;
+
+  let content =
+`RESEARCH PAPER
+${topic}
+
+Discipline: ${discipline}
+Paper Type: ${type}
+Citation Style: ${style}
+
+`;
+
+  sections.forEach(section => {
+    content +=
+      "\n\n" + section.toUpperCase() +
+      "\n\n" + (paper[section] || "");
+  });
+
+  const blob = new Blob([content], {
+    type: "text/plain;charset=utf-8"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+
+  a.href = url;
+  a.download = "research-paper-draft.txt";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+function clearSection() {
+
+  if (activeSection < 0) return;
+
+  if (confirm("Clear this section?")) {
+    document.getElementById("output").value = "";
+    paper[sections[activeSection]] = "";
+  }
+}
+</script>
+
+</body>
+</html>
+
